@@ -37,12 +37,13 @@
       color: #0ff;
       border: 2px solid #0ff;
       padding: 0.8rem 1.5rem;
-      border-radius: 10px;
+      border-radius: 20px;
       font-size: 1rem;
       cursor: pointer;
       text-shadow: 0 0 5px #0ff;
       box-shadow: 0 0 5px #0ff, 0 0 15px #0ff inset;
       transition: all 0.2s ease-in-out;
+      margin-bottom: 1rem;
     }
 
     button:hover {
@@ -52,11 +53,11 @@
     }
 
     #webcam-container {
-      margin: 2rem auto 0;
-      width: 200px;
-      height: 200px;
+      width: 220px;
+      height: 220px;
       background-color: #fff;
       border-radius: 16px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -78,13 +79,17 @@
 <body>
   <div class="neon-title">다면체와 회전체</div>
 
-  <p class="description">이 인공지능은 <strong>다면체</strong>와 <strong>회전체</strong>를 식별합니다.<br>
-    <strong>Start</strong> 버튼을 눌러 웹캠을 실행하고, 주변에 있는 사물이나 교재의 도형을 보여주세요!</p>
+  <p class="description">
+    이 인공지능은 <strong>다면체</strong>와 <strong>회전체</strong>를 식별합니다.<br>
+    <strong>Start</strong> 버튼을 눌러 웹캠을 실행하고, 주변에 있는 사물이나 교재의 도형을 보여주세요!
+  </p>
   <button onclick="init()">Start</button>
 
+  <!-- 흰색 네모 상자 (웹캠 영역 고정 표시) -->
   <div id="webcam-container">
-    <!-- 웹캠 시작 전에도 흰 네모 표시됨 -->
+    <!-- 캠 시작 전에도 이 상자는 흰색 박스로 보입니다 -->
   </div>
+
   <div id="label-container"></div>
 
   <script>
@@ -105,7 +110,10 @@
       await webcam.play();
       window.requestAnimationFrame(loop);
 
-      document.getElementById("webcam-container").appendChild(webcam.canvas);
+      const container = document.getElementById("webcam-container");
+      container.innerHTML = ""; // 흰 박스 제거
+      container.appendChild(webcam.canvas); // 웹캠 삽입
+
       labelContainer = document.getElementById("label-container");
       for (let i = 0; i < maxPredictions; i++) {
         labelContainer.appendChild(document.createElement("div"));
