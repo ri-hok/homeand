@@ -1,15 +1,96 @@
-<!-- <head> ... 생략 가능 -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>다면체 & 회전체 식별 AI</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .neon-title {
+      font-size: 2rem;
+      color: #fff;
+      border: 4px solid #0ff;
+      border-radius: 20px;
+      padding: 1rem 2rem;
+      margin: 1rem auto;
+      width: fit-content;
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+      box-shadow: 0 0 10px #0ff, 0 0 40px #0ff;
+    }
+
+    .description {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      color: #aaa;
+    }
+
+    button {
+      background-color: #111;
+      color: #0ff;
+      border: 2px solid #0ff;
+      padding: 0.8rem 1.5rem;
+      border-radius: 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      text-shadow: 0 0 5px #0ff;
+      box-shadow: 0 0 5px #0ff, 0 0 15px #0ff inset;
+      transition: all 0.2s ease-in-out;
+      margin-bottom: 1rem;
+    }
+
+    button:hover {
+      background-color: #0ff;
+      color: #111;
+      box-shadow: 0 0 10px #0ff, 0 0 30px #0ff;
+    }
+
+    #webcam-container {
+      width: 220px;
+      height: 220px;
+      background-color: #fff;
+      border-radius: 16px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #label-container {
+      margin-top: 2rem;
+    }
+
+    #label-container > div {
+      margin: 0.3rem 0;
+      font-size: 1.1rem;
+      color: #0ff;
+      text-shadow: 0 0 5px #0ff;
+    }
+  </style>
+</head>
 <body>
   <div class="neon-title">다면체와 회전체</div>
+
   <p class="description">
     이 인공지능은 <strong>다면체</strong>와 <strong>회전체</strong>를 식별합니다.<br>
-    <strong>Start</strong> 버튼을 눌러 웹캠을 실행하고, 주변의 사물이나 교재의 도형을 보여주세요!
+    <strong>Start</strong> 버튼을 눌러 웹캠을 실행하고, 주변의 사물이나, 입체도형 교구, 교재의 도형을 보여주세요!
   </p>
   <button onclick="init()">Start</button>
 
-  <div id="webcam-container"></div>
+  <!-- 흰색 네모 상자 (웹캠 영역 고정 표시) -->
+  <div id="webcam-container">
+    <!-- 캠 시작 전에도 이 상자는 흰색 박스로 보입니다 -->
+  </div>
+
   <div id="label-container"></div>
-  <div id="result"></div>
 
   <script>
     const URL = "https://teachablemachine.withgoogle.com/models/AwkAbaC-0/";
@@ -23,14 +104,15 @@
       model = await tmImage.load(modelURL, metadataURL);
       maxPredictions = model.getTotalClasses();
 
-      webcam = new tmImage.Webcam(200, 200, true);
+      const flip = true;
+      webcam = new tmImage.Webcam(200, 200, flip);
       await webcam.setup();
       await webcam.play();
       window.requestAnimationFrame(loop);
 
       const container = document.getElementById("webcam-container");
-      container.innerHTML = "";
-      container.appendChild(webcam.canvas);
+      container.innerHTML = ""; // 흰 박스 제거
+      container.appendChild(webcam.canvas); // 웹캠 삽입
 
       labelContainer = document.getElementById("label-container");
       for (let i = 0; i < maxPredictions; i++) {
@@ -46,23 +128,12 @@
 
     async function predict() {
       const prediction = await model.predict(webcam.canvas);
-      let resultText = "";
-
       for (let i = 0; i < maxPredictions; i++) {
-        const className = prediction[i].className;
-        const probability = prediction[i].probability;
-        const text = `${className}: ${probability.toFixed(2)}`;
-        labelContainer.childNodes[i].innerHTML = text;
-
-        if (className.includes("다면체") && probability > 0.5) {
-          resultText = "다면체";
-        } else if (className.includes("회전체") && probability > 0.5) {
-          resultText = "회전체";
-        }
+        const classPrediction =
+          prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+        labelContainer.childNodes[i].innerHTML = classPrediction;
       }
-
-      document.getElementById("result").innerText = resultText;
-      console.log(prediction.map(p => `${p.className}: ${p.probability.toFixed(2)}`));
     }
   </script>
 </body>
+</html>
