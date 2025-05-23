@@ -51,7 +51,14 @@
       box-shadow: 0 0 10px #0ff, 0 0 30px #0ff;
     }
 
-    #webcam-container, #label-container {
+    #webcam-container {
+      margin-top: 2rem;
+      display: inline-block;
+      border: 2px solid #fff; /* ⬅ 추가됨 */
+      padding: 4px;
+    }
+
+    #label-container {
       margin-top: 2rem;
     }
 
@@ -64,7 +71,6 @@
   </style>
 </head>
 <body>
-  <!-- 🔽 이 부분만 수정됨 -->
   <div class="neon-title">다면체와 회전체</div>
 
   <p class="description">이 인공지능은 <strong>다면체</strong>와 <strong>회전체</strong>를 식별합니다.<br>
@@ -116,3 +122,4 @@
   </script>
 </body>
 </html>
+
