@@ -74,6 +74,14 @@
       color: #0ff;
       text-shadow: 0 0 5px #0ff;
     }
+
+    #result {
+      margin-top: 1.5rem;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff;
+    }
   </style>
 </head>
 <body>
@@ -81,16 +89,13 @@
 
   <p class="description">
     이 인공지능은 <strong>다면체</strong>와 <strong>회전체</strong>를 식별합니다.<br>
-    <strong>Start</strong> 버튼을 눌러 웹캠을 실행하고, 주변에 있는 사물이나 교재의 도형을 보여주세요!
+    <strong>Start</strong> 버튼을 눌러 웹캠을 실행하고, 주변의 사물이나 교재의 도형을 보여주세요!
   </p>
   <button onclick="init()">Start</button>
 
-  <!-- 흰색 네모 상자 (웹캠 영역 고정 표시) -->
-  <div id="webcam-container">
-    <!-- 캠 시작 전에도 이 상자는 흰색 박스로 보입니다 -->
-  </div>
-
+  <div id="webcam-container"></div>
   <div id="label-container"></div>
+  <div id="result"></div> <!-- ⬅️ 결과 출력 영역 -->
 
   <script>
     const URL = "https://teachablemachine.withgoogle.com/models/AwkAbaC-0/";
@@ -111,8 +116,8 @@
       window.requestAnimationFrame(loop);
 
       const container = document.getElementById("webcam-container");
-      container.innerHTML = ""; // 흰 박스 제거
-      container.appendChild(webcam.canvas); // 웹캠 삽입
+      container.innerHTML = "";
+      container.appendChild(webcam.canvas);
 
       labelContainer = document.getElementById("label-container");
       for (let i = 0; i < maxPredictions; i++) {
@@ -128,11 +133,22 @@
 
     async function predict() {
       const prediction = await model.predict(webcam.canvas);
+      let resultText = "";
+
       for (let i = 0; i < maxPredictions; i++) {
-        const classPrediction =
-          prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-        labelContainer.childNodes[i].innerHTML = classPrediction;
+        const className = prediction[i].className;
+        const probability = prediction[i].probability;
+        const text = `${className}: ${probability.toFixed(2)}`;
+        labelContainer.childNodes[i].innerHTML = text;
+
+        // 50% 넘는 경우 표시
+        if (probability > 0.5) {
+          if (className.includes("다면체")) resultText = "다면체";
+          else if (className.includes("회전체")) resultText = "회전체";
+        }
       }
+
+      document.getElementById("result").innerText = resultText;
     }
   </script>
 </body>
