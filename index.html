@@ -89,13 +89,13 @@
 
   <p class="description">
     이 인공지능은 <strong>다면체</strong>와 <strong>회전체</strong>를 식별합니다.<br>
-    <strong>Start</strong> 버튼을 눌러 웹캠을 실행하고, 주변의 사물이나 교재의 도형을 보여주세요!
+    <strong>Start</strong> 버튼을 눌러 웹캠을 실행하고, 교재의 도형을 보여주세요!
   </p>
   <button onclick="init()">Start</button>
 
   <div id="webcam-container"></div>
   <div id="label-container"></div>
-  <div id="result"></div> <!-- ⬅️ 결과 출력 영역 -->
+  <div id="result"></div> <!-- 결과 출력 위치 -->
 
   <script>
     const URL = "https://teachablemachine.withgoogle.com/models/AwkAbaC-0/";
@@ -141,14 +141,18 @@
         const text = `${className}: ${probability.toFixed(2)}`;
         labelContainer.childNodes[i].innerHTML = text;
 
-        // 50% 넘는 경우 표시
-        if (probability > 0.5) {
-          if (className.includes("다면체")) resultText = "다면체";
-          else if (className.includes("회전체")) resultText = "회전체";
+        // 정확한 클래스 이름과 확률 조건
+        if (className === "다면체" && probability > 0.5) {
+          resultText = "다면체";
+        } else if (className === "회전체" && probability > 0.5) {
+          resultText = "회전체";
         }
       }
 
       document.getElementById("result").innerText = resultText;
+
+      // 디버깅용 콘솔 출력
+      console.log(prediction.map(p => `${p.className}: ${p.probability.toFixed(2)}`));
     }
   </script>
 </body>
