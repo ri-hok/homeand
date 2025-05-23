@@ -77,7 +77,7 @@
 
     #result {
       margin-top: 1.5rem;
-      font-size: 1.4rem;
+      font-size: 2rem;
       font-weight: bold;
       color: #0ff;
       text-shadow: 0 0 10px #0ff;
@@ -95,7 +95,7 @@
 
   <div id="webcam-container"></div>
   <div id="label-container"></div>
-  <div id="result"></div> <!-- 결과 출력 위치 -->
+  <div id="result"></div>
 
   <script>
     const URL = "https://teachablemachine.withgoogle.com/models/AwkAbaC-0/";
@@ -109,8 +109,7 @@
       model = await tmImage.load(modelURL, metadataURL);
       maxPredictions = model.getTotalClasses();
 
-      const flip = true;
-      webcam = new tmImage.Webcam(200, 200, flip);
+      webcam = new tmImage.Webcam(200, 200, true);
       await webcam.setup();
       await webcam.play();
       window.requestAnimationFrame(loop);
@@ -141,7 +140,7 @@
         const text = `${className}: ${probability.toFixed(2)}`;
         labelContainer.childNodes[i].innerHTML = text;
 
-        // 정확한 클래스 이름과 확률 조건
+        // 클래스명 정확히 매칭 + 확률 50% 넘을 때만 출력
         if (className === "다면체" && probability > 0.5) {
           resultText = "다면체";
         } else if (className === "회전체" && probability > 0.5) {
@@ -149,10 +148,8 @@
         }
       }
 
+      // 화면에 표시
       document.getElementById("result").innerText = resultText;
-
-      // 디버깅용 콘솔 출력
-      console.log(prediction.map(p => `${p.className}: ${p.probability.toFixed(2)}`));
     }
   </script>
 </body>
