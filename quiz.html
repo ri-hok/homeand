@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>부모력 자가진단 테스트</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #fdf6f0;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #ff6b81;
+    }
+    .question-box {
+      background-color: #fff;
+      border: 2px solid #ffb347;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      font-size: 18px;
+      display: none;
+    }
+    .scale {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+    }
+    .scale label {
+      flex: 1;
+      text-align: center;
+      font-size: 16px;
+    }
+    .result {
+      display: none;
+      background-color: #fff5e6;
+      border: 2px dashed #ffb347;
+      padding: 20px;
+      margin-top: 30px;
+      border-radius: 10px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .btn {
+      display: block;
+      margin: 30px auto;
+      padding: 10px 30px;
+      background-color: #ffb347;
+      color: white;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>자녀 앞 나의 본모습 테스트😅</h1>
+
+  <form id="quizForm">
+    <div id="questionBox" class="question-box"></div>
+    <button type="button" id="nextBtn" class="btn" onclick="nextQuestion()">다음 문제 ▶</button>
+  </form>
+
+  <div class="result" id="resultBox"></div>
+
+  <script>
+    const questions = [
+      "1. 아이가 그린 그림을 보고 “와~!” 했지만, 사실 뭐 그린 건지 몰랐다.",
+      "2. ‘잠이 보약’이라는 말을 ‘성적표 보고 잠이 확 깼다’로 이해한 적 있다.",
+      "3. “게임 10분만 더 하고 잘게”라는 말을 들으면, 10분 뒤 내 인내심이 사라진다.",
+      "4. 아이가 좋아하는 건 웬만하면 ‘진로’로 연결해 본다.",
+      "5. 내 아이 성적에 따라 날씨가 흐려진 적 있다.",
+      "6. 자녀가 고민을 털어놓기 전에 이미 해결책 3개는 떠올려 본 적 있다.",
+      "7. 아이가 나를 닮았다고 하면 조금 뿌듯하면서도 살짝 걱정된다.",
+      "8. “다 널 위해서야”라는 말을 하고 나서 스스로 민망했던 적 있다.",
+      "9. 아이가 조용하면 일단 뭔가 수상하다고 느낀다.",
+      "10. “하고 싶으면 해”라고 말했지만, 마음속엔 이미 정답이 정해져 있었다."
+    ];
+
+    let current = 0;
+    let answers = [];
+
+    window.onload = () => {
+      showQuestion(current);
+    };
+
+    function showQuestion(index) {
+      const box = document.getElementById("questionBox");
+      box.innerHTML = `<p>${questions[index]}</p>
+        <div class="scale">
+          <label>전혀 그렇지 않다</label>
+          ${[1, 2, 3, 4, 5].map(n => `
+            <label><input type="radio" name="q" value="${n}"> ${n}</label>
+          `).join('')}
+          <label>매우 그렇다</label>
+        </div>`;
+      box.style.display = 'block';
+
+      const btn = document.getElementById("nextBtn");
+      btn.innerText = (index === questions.length - 1) ? "결과 보기 💡" : "다음 문제 ▶";
+    }
+
+    function nextQuestion() {
+      const selected = document.querySelector('input[name="q"]:checked');
+      if (!selected) {
+        alert("답을 선택해주세요!");
+        return;
+      }
+
+      answers.push(parseInt(selected.value));
+      current++;
+
+      if (current < questions.length) {
+        showQuestion(current);
+      } else {
+        document.getElementById("quizForm").style.display = 'none';
+        calculateResult();
+      }
+    }
+
+    function calculateResult() {
+      const total = answers.reduce((sum, val) => sum + val, 0);
+
+      let resultText = '';
+      if (total <= 19) {
+        resultText = `🍃 <strong>인생 2회차형</strong><br>“나는 조급하지 않다… 적어도 겉으로는.”<br>아이 인생은 아이가 살아가는 것이라는 철학자. 단, 시험기간엔 심장이 조금 빨리 뛴다.`;
+      } else if (total <= 29) {
+        resultText = `🧢 <strong>고민 많은 친구형</strong><br>아이랑 친구처럼 지내고 싶지만, 현실은 조언과 잔소리 사이를 줄타기 중. 오늘도 “그냥 들어만 줄게”라 해놓고 말이 많아졌다.`;
+      } else if (total <= 39) {
+        resultText = `🎧 <strong>무의식적 코치형</strong><br>“듣고만 있으려고 했는데…” 어느새 5분 스피치.<br>아이는 대화를 원했지만 나는 해법을 줬다. 그게 또 사랑이지 뭐.`;
+      } else {
+        resultText = `📡 <strong>초정밀 감시형</strong><br>모든 상황을 예측하고, 모든 침묵이 수상하다.<br>마음은 사랑, 행동은 통제. 아이가 먼저 “엄마/아빠, 진정하세요”라고 말함.`;
+      }
+
+      const resultBox = document.getElementById("resultBox");
+      resultBox.innerHTML = `<h2>💖 테스트 결과 💖</h2><p>${resultText}</p>
+        <button class="btn" onclick="restartQuiz()">처음으로 되돌아가기 🔄</button>`;
+      resultBox.style.display = 'block';
+    }
+
+    function restartQuiz() {
+      location.reload();
+    }
+  </script>
+</body>
+</html>
