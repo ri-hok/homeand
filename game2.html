@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Neon Sudoku</title>
+  <style>
+    body {
+      background-color: #1a0033;
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      margin: 0;
+    }
+    .sudoku-container-wrapper {
+      display: flex;
+      gap: 40px;
+      margin-top: 20px;
+    }
+    .sudoku-container {
+      display: grid;
+      gap: 5px;
+      padding: 20px;
+      border: 3px solid #ff00ff;
+      box-shadow: 0 0 20px #ff00ff;
+      background-color: #2a004f;
+    }
+    .cell {
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      text-align: center;
+      border: none;
+      background-color: #1a0033;
+      color: #fff;
+      box-shadow: inset 0 0 10px #ff00ff;
+    }
+    .cell:focus {
+      outline: none;
+      box-shadow: 0 0 10px #ffff00;
+    }
+    h1 {
+      font-size: 32px;
+      color: #ffccff;
+      text-shadow: 0 0 10px #ff00ff;
+    }
+    h2 {
+      margin-top: 10px;
+      color: #ffccff;
+      text-shadow: 0 0 5px #ff00ff;
+    }
+    .controls, .bottom-controls {
+      margin-top: 10px;
+    }
+    button {
+      font-family: 'Orbitron', sans-serif;
+      background-color: #ff00ff;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff00ff;
+    }
+    button:hover {
+      background-color: #cc00cc;
+    }
+  </style>
+</head>
+<body>
+  <h1>NEON SUDOKU</h1>
+  <h2>레벨 선택</h2>
+  <div class="controls">
+    <button onclick="loadLevel(1)">레벨 1 (4x4)</button>
+    <button onclick="loadLevel(2)">레벨 2 (4x4)</button>
+    <button onclick="loadLevel(3)">레벨 3 (6x6)</button>
+    <button onclick="loadLevel(4)">레벨 4 (6x6)</button>
+    <button onclick="showSolution()">정답 보기</button>
+  </div>
+  <div class="sudoku-container-wrapper">
+    <div class="sudoku-container" id="sudoku"></div>
+    <div class="sudoku-container" id="solution" style="display:none;"></div>
+  </div>
+  <div class="bottom-controls">
+    <button onclick="checkAnswer()">완료</button>
+    <button onclick="nextPuzzle()">다음 문제</button>
+  </div>
+
+  <script>
+    function generatePuzzle(size) {
+      const solution = Array.from({ length: size }, (_, i) => Array.from({ length: size }, (_, j) => ((j + i) % size + 1)));
+      const puzzle = solution.map(row => row.map(val => (Math.random() < 0.5 ? val : 0)));
+      return { size, puzzle, solution };
+    }
+
+    const levels = {
+      1: Array.from({ length: 5 }, () => generatePuzzle(4)),
+      2: Array.from({ length: 5 }, () => generatePuzzle(4)),
+      3: Array.from({ length: 5 }, () => generatePuzzle(6)),
+      4: Array.from({ length: 5 }, () => generatePuzzle(6))
+    };
+
+    let currentLevel = 1;
+    let currentPuzzleIndex = 0;
+
+    function loadLevel(level) {
+      currentLevel = level;
+      currentPuzzleIndex = 0;
+      loadPuzzle();
+    }
+
+    function loadPuzzle() {
+      const puzzleData = levels[currentLevel][currentPuzzleIndex];
+      const size = puzzleData.size;
+      const sudokuContainer = document.getElementById('sudoku');
+      const solutionContainer = document.getElementById('solution');
+      sudokuContainer.innerHTML = '';
+      solutionContainer.innerHTML = '';
+      solutionContainer.style.display = 'none';
+
+      sudokuContainer.style.gridTemplateColumns = `repeat(${size}, 60px)`;
+      sudokuContainer.style.gridTemplateRows = `repeat(${size}, 60px)`;
+
+      for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
+          const cell = document.createElement('input');
+          cell.className = 'cell';
+          cell.type = 'text';
+          cell.maxLength = 1;
+          cell.dataset.row = row;
+          cell.dataset.col = col;
+          cell.dataset.size = size;
+          const val = puzzleData.puzzle[row][col];
+          if (val !== 0) {
+            cell.value = val;
+            cell.disabled = true;
+            cell.style.color = '#000';
+            cell.style.backgroundColor = '#ffccff';
+          } else {
+            cell.addEventListener('input', (e) => {
+              const value = e.target.value;
+              if (!new RegExp(`^[1-${size}]$`).test(value)) {
+                e.target.value = '';
+              } else {
+                e.target.style.color = '#fff';
+              }
+            });
+          }
+          sudokuContainer.appendChild(cell);
+        }
+      }
+    }
+
+    function showSolution() {
+      const solution = levels[currentLevel][currentPuzzleIndex].solution;
+      const size = solution.length;
+      const solutionContainer = document.getElementById('solution');
+      solutionContainer.innerHTML = '';
+      solutionContainer.style.display = 'grid';
+      solutionContainer.style.gridTemplateColumns = `repeat(${size}, 60px)`;
+      solutionContainer.style.gridTemplateRows = `repeat(${size}, 60px)`;
+
+      for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
+          const cell = document.createElement('input');
+          cell.className = 'cell';
+          cell.type = 'text';
+          cell.disabled = true;
+          cell.value = solution[row][col];
+          cell.style.backgroundColor = '#ffccff';
+          cell.style.color = '#000';
+          solutionContainer.appendChild(cell);
+        }
+      }
+    }
+
+    function nextPuzzle() {
+      currentPuzzleIndex = (currentPuzzleIndex + 1) % levels[currentLevel].length;
+      loadPuzzle();
+    }
+
+    function checkAnswer() {
+      const puzzleData = levels[currentLevel][currentPuzzleIndex];
+      const size = puzzleData.size;
+      const userInputs = document.querySelectorAll('#sudoku .cell');
+      let correct = true;
+      userInputs.forEach(cell => {
+        const row = parseInt(cell.dataset.row);
+        const col = parseInt(cell.dataset.col);
+        const userValue = cell.value;
+        if (userValue === '' || parseInt(userValue) !== puzzleData.solution[row][col]) {
+          correct = false;
+        }
+      });
+      if (correct) {
+        alert("성공! 잘했어요 😊");
+      } else {
+        alert("다시 한번 도전해 보세요 🔄");
+      }
+    }
+
+    loadLevel(1);
+  </script>
+</body>
+</html>
