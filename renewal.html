@@ -1,0 +1,156 @@
+﻿
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>프라임수학전문학원 사이트 개편작업 중</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #cfe3ff;
+      font-family: 'Pretendard', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .container {
+      text-align: center;
+      padding: 80px 20px;
+      position: relative;
+    }
+
+    .balloon {
+      width: 80px;
+      height: 100px;
+      border-radius: 50%;
+      position: absolute;
+      background: linear-gradient(135deg, #ffaec0, #ff88cc);
+      box-shadow: inset -5px -10px 20px rgba(0, 0, 0, 0.1);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .balloon::after {
+      content: "";
+      position: absolute;
+      width: 2px;
+      height: 50px;
+      background: #999;
+      top: 100px;
+      left: 50%;
+    }
+
+    .balloon1 {
+      top: 30px;
+      left: 10%;
+      background: linear-gradient(135deg, #f8b195, #f67280);
+    }
+
+    .balloon2 {
+      top: 60px;
+      right: 12%;
+      background: linear-gradient(135deg, #c06c84, #6c5b7b);
+      animation-delay: 2s;
+    }
+
+    .balloon3 {
+      top: 100px;
+      left: 20%;
+      background: linear-gradient(135deg, #74b9ff, #a29bfe);
+      animation-delay: 1s;
+    }
+
+    .balloon4 {
+      top: 120px;
+      right: 18%;
+      background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+      animation-delay: 3s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .circle-box {
+      background: white;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      margin: 0 auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      border: 6px solid #c8d6e5;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .circle-box h1 {
+      margin: 10px 0 5px;
+      font-size: 20px;
+      color: #444;
+      font-weight: normal;
+    }
+
+    .circle-box h2 {
+      margin: 5px 0;
+      font-size: 28px;
+      color: #222;
+      line-height: 1.4;
+    }
+
+    .circle-box p {
+      margin-top: 12px;
+      font-size: 18px;
+      color: #666;
+    }
+
+    .coming-soon-text {
+      font-size: 36px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      color: #6c5ce7;
+      margin-bottom: 30px;
+    }
+
+    @media screen and (max-width: 480px) {
+      .circle-box {
+        width: 280px;
+        height: 280px;
+        padding: 20px;
+      }
+      .circle-box h2 {
+        font-size: 22px;
+      }
+      .coming-soon-text {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 풍선들 -->
+    <div class="balloon balloon1"></div>
+    <div class="balloon balloon2"></div>
+    <div class="balloon balloon3"></div>
+    <div class="balloon balloon4"></div>
+
+    <!-- 메인 텍스트 -->
+    <div class="coming-soon-text">coming soon</div>
+
+    <!-- 원형 상자 -->
+    <div class="circle-box">
+      <h1>프라임수학전문학원</h1>
+      <h2>사이트<br/>개편작업 중</h2>
+      <p>032)516-1475</p>
+    </div>
+  </div>
+</body>
+</html>
